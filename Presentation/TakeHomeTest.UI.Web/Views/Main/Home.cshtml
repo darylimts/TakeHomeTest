@@ -1,0 +1,151 @@
+﻿@model ClockViewModel
+@{
+    ViewData["Title"] = "Main";
+}
+
+<div class="row">
+
+    <div class="col-md-6 table-bordered">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="col-lg-auto col-md-auto col-sm-auto form-group">
+                <label asp-for="DecrementSecs"></label>
+            </div>
+
+            @if (!Model.TimerStart)
+            {
+                <div class="col-lg-auto col-md-auto col-sm-auto form-group">
+
+                    <input asp-for="DecrementSecs" class="form-control"
+                           type="text"
+                           autocomplete="off" onkeypress='return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 0' />
+                    <span asp-validation-for="DecrementSecs" class="text-danger"></span>
+                </div>
+                <div class="col-lg-auto col-md-auto col-sm-auto form-group">
+                    <button type="submit" class="btn btn-success" asp-action="CreateClockDTO">ENTER</button>
+                </div>
+            }
+            else
+            {
+                <div class="col-lg-auto col-md-auto col-sm-auto form-group">
+
+                    <input asp-for="DecrementSecs" class="form-control" disabled
+                           type="text"
+                           autocomplete="off" onkeypress='return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 0' />
+                    <span asp-validation-for="DecrementSecs" class="text-danger"></span>
+                </div>
+                <div class="col-lg-auto col-md-auto col-sm-auto form-group">
+                    <button type="submit" class="btn btn-success" disabled asp-action="CreateClockDTO">ENTER</button>
+                </div>
+            }
+        </form>
+    </div>
+
+</div>
+
+<br />
+
+@if (Model.DecrementSecs > 0)
+{
+    <div class="row">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="col-md-6 ">
+            <div><time /></div>
+            <div><time></time></div>
+            <div class="col-lg-auto col-md-auto col-sm-auto form-group">
+                @*@if (!Model.TimerStart)
+                    {
+                        <button type="submit" class="btn btn-success" onclick="getTime()">Start Timer</button>
+
+                    }
+                    else
+                    {
+                        <form method="post">
+                            <button type="submit" class="btn btn-success" asp-action="StopTimer">Stop Timer</button>
+
+                        </form>
+                    }*@
+                <div id="buttonStart">
+                    <button type="submit" class="btn btn-success" onclick="getTime()">Start Timer</button>
+                </div>
+                <div id="buttonStop" style="display:none">
+                    <form method="post">
+                        <button type="submit" class="btn btn-success" asp-action="StopTimer">Stop Timer</button>
+
+                    </form>
+                </div>
+                <!-- Your Table Here -->
+                <table>
+                    <tr>
+                        <td>
+                            <label disabled asp-for="CurrentDateTime"></label>
+                            <input disabled id="CurrentDateTime" />
+                        </td>
+                        <td>
+                            <label disabled asp-for="DecrementDateTime"></label>
+                            @*<div id="DecrementDateTime"></div>*@
+                            <input disabled id="DecrementDateTime" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+
+
+<script type="text/javascript">
+    // Update the count down every 1 second
+    function getTime() {setInterval(function () {
+
+        //alert('Get user data');
+        var serverTime;
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("storeClockModel")",
+            data: {},
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                //$("#CurrentDateTime").html(data.currenttime);
+                //$("#DecrementDateTime").html(data.decrementtime);
+                document.getElementById("CurrentDateTime").value = data.currenttime;
+                document.getElementById("DecrementDateTime").value = data.decrementtime;
+                document.getElementById("buttonStart").style.display = "none";
+                document.getElementById("buttonStop").style.display = "block";
+            },
+            failure: function (errMsg) {
+                alert(errMsg);
+            }
+        });
+
+    }, (1000));
+    }
+</script>
+
+@*<div class="text-center">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="col-lg-auto col-md-auto col-sm-auto">
+            <label asp-for="DecrementSecs/" class="form-control"></label>
+        </div>
+        <div class="col-lg-auto col-md-auto col-sm-auto">
+            <div class="form-control">
+                <input asp-for="DecrementSecs" type="text" autocomplete="off"
+                       ng-model="Clock.DecrementSecs"
+                       id="txtDecementSec" name="txtDecementSec"
+                       required ng-minlength="1" ng-maxlength="2" maxlength="2"
+                       onkeypress='return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 0' />
+
+                <span asp-validation-for="DecrementSecs" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-lg-auto col-md-auto col-sm-auto">
+            <button type="button" class="button">BACK</button>
+            <button type="submit" class="btn btn-success">ENTER</button>
+        </div>
+    </div>*@
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

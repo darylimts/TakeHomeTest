@@ -1,0 +1,15 @@
+version: '3.4'
+
+services:
+  takehometest.hosts.web:
+    image: ${DOCKER_REGISTRY-}takehometesthostsweb
+    build:
+      context: .
+      dockerfile: Hosts/TakeHomeTest.Hosts.Web/Dockerfile
+
+  takehometest.ui.web:
+    image: ${DOCKER_REGISTRY-}takehometestuiweb
+    build:
+      context: .
+      dockerfile: Presentation/TakeHomeTest.UI.Web/Dockerfile
+
